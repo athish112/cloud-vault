@@ -817,15 +817,26 @@ def home():
                             <td class="mono">${formatBytes(f.size)}</td>
                             <td style="text-align:right;">
                                 <div class="action-group">
-                                    <button class="btn-sm verify" onclick="verifyIntegrity(${JSON.stringify(f.key)})">Verify Hash</button>
-                                    <button class="btn-sm" onclick="openShareModal(${JSON.stringify(f.key)})">Share / QR</button>
-                                    <button class="btn-sm danger" onclick="deleteFile(${JSON.stringify(f.key)})">Delete</button>
+                                    <button type="button" class="btn-sm verify" data-action="verify" data-key="${escapeHtml(f.key)}">Verify Hash</button>
+                                    <button type="button" class="btn-sm" data-action="share" data-key="${escapeHtml(f.key)}">Share / QR</button>
+                                    <button type="button" class="btn-sm danger" data-action="delete" data-key="${escapeHtml(f.key)}">Delete</button>
                                 </div>
                             </td>
                         </tr>
                     `;
                 }).join('');
             }
+
+            document.getElementById('filesTableBody').addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-action]');
+                if (!btn) return;
+                const action = btn.getAttribute('data-action');
+                const key = btn.getAttribute('data-key');
+                if (action === 'verify') verifyIntegrity(key);
+                else if (action === 'share') openShareModal(key);
+                else if (action === 'delete') deleteFile(key);
+            });
+            
 
             async function verifyIntegrity(key) {
                 showToast(`Recomputing live SHA-256 from S3 stream for "${key}"...`);
