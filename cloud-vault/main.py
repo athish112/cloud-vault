@@ -1,4 +1,5 @@
 import os
+import io
 import hashlib
 import json
 from datetime import datetime, timedelta, timezone
@@ -58,7 +59,6 @@ def home():
             :root {
                 --bg-base: #060913;
                 --bg-card: rgba(15, 23, 42, 0.84);
-                --bg-hover: rgba(30, 41, 59, 0.72);
                 --border: rgba(148, 163, 184, 0.14);
                 --border-glow: rgba(99, 102, 241, 0.48);
                 --text-primary: #f8fafc;
@@ -69,9 +69,7 @@ def home():
                 --danger: #ef4444;
                 --warning: #f59e0b;
             }
-
             * { box-sizing: border-box; margin: 0; padding: 0; }
-
             body {
                 font-family: 'Inter', -apple-system, sans-serif;
                 background-color: var(--bg-base);
@@ -84,41 +82,27 @@ def home():
                     linear-gradient(90deg, rgba(148, 163, 184, 0.035) 1px, transparent 1px);
                 background-size: 100% 100%, 100% 100%, 34px 34px, 34px 34px;
             }
-
             .navbar {
-                position: sticky;
-                top: 0;
-                z-index: 50;
+                position: sticky; top: 0; z-index: 50;
                 backdrop-filter: blur(16px);
                 background: rgba(6, 9, 19, 0.82);
                 border-bottom: 1px solid var(--border);
             }
-
             .nav-inner {
-                max-width: 1220px;
-                margin: 0 auto;
-                padding: 13px 24px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 14px;
-                flex-wrap: wrap;
+                max-width: 1220px; margin: 0 auto; padding: 13px 24px;
+                display: flex; align-items: center; justify-content: space-between;
+                gap: 14px; flex-wrap: wrap;
             }
-
             .brand { display: flex; align-items: center; gap: 12px; }
-
             .brand-icon {
                 width: 38px; height: 38px; border-radius: 10px;
                 background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
                 display: grid; place-items: center;
                 box-shadow: 0 0 24px rgba(99, 102, 241, 0.45);
             }
-
             .brand-title { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.02em; }
             .brand-sub { font-size: 0.74rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
-
             .nav-pills { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
             .status-pill {
                 display: inline-flex; align-items: center; gap: 8px;
                 padding: 6px 12px; border-radius: 999px;
@@ -127,100 +111,76 @@ def home():
                 color: #6ee7b7; font-size: 0.76rem;
                 font-family: 'JetBrains Mono', monospace;
             }
-
             .pulse-dot {
                 width: 8px; height: 8px; border-radius: 50%;
-                background: var(--success);
-                animation: pulse 2s infinite;
+                background: var(--success); animation: pulse 2s infinite;
             }
-
             @keyframes pulse {
                 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
                 70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
                 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
             }
-
             .vault-btn {
                 display: inline-flex; align-items: center; gap: 6px;
                 padding: 6px 13px; border-radius: 999px;
                 font-size: 0.78rem; font-weight: 600; cursor: pointer;
                 border: 1px solid rgba(245, 158, 11, 0.4);
-                background: rgba(245, 158, 11, 0.12);
-                color: #fcd34d;
-                transition: all 0.2s ease;
+                background: rgba(245, 158, 11, 0.12); color: #fcd34d;
             }
-
             .vault-btn.unlocked {
                 border-color: rgba(16, 185, 129, 0.4);
-                background: rgba(16, 185, 129, 0.12);
-                color: #6ee7b7;
+                background: rgba(16, 185, 129, 0.12); color: #6ee7b7;
             }
-
             .nav-link {
                 color: var(--text-secondary); text-decoration: none;
                 font-size: 0.8rem; font-weight: 500;
                 padding: 6px 11px; border-radius: 8px;
                 border: 1px solid var(--border);
                 background: rgba(15, 23, 42, 0.55);
-                transition: all 0.2s ease;
             }
-
             .nav-link:hover { color: var(--text-primary); border-color: var(--border-glow); }
-
             .container { max-width: 1220px; margin: 0 auto; padding: 24px 24px 60px; }
-
             .view-tabs {
                 display: inline-flex; background: rgba(15, 23, 42, 0.85);
                 border: 1px solid var(--border); border-radius: 12px;
                 padding: 4px; margin-bottom: 22px; flex-wrap: wrap; gap: 4px;
             }
-
             .tab-btn {
                 border: none; background: transparent; color: var(--text-secondary);
                 padding: 9px 16px; border-radius: 9px; font-size: 0.84rem;
-                font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+                font-weight: 600; cursor: pointer;
             }
-
             .tab-btn.active {
                 background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(6, 182, 212, 0.22));
                 color: var(--text-primary);
                 border: 1px solid rgba(99, 102, 241, 0.38);
             }
-
             .kpi-grid {
                 display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                 gap: 15px; margin-bottom: 22px;
             }
-
             .kpi-card {
                 background: var(--bg-card); border: 1px solid var(--border);
                 border-radius: 14px; padding: 17px 19px; backdrop-filter: blur(12px);
             }
-
             .kpi-label { font-size: 0.73rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 6px; }
             .kpi-value { font-size: 1.38rem; font-weight: 700; letter-spacing: -0.02em; }
             .kpi-meta { margin-top: 5px; font-size: 0.74rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); }
-
             .dashboard-grid {
                 display: grid; grid-template-columns: 375px 1fr;
                 gap: 20px; align-items: start;
             }
-
             @media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } }
-
             .panel {
                 background: var(--bg-card); border: 1px solid var(--border);
                 border-radius: 16px; padding: 20px; backdrop-filter: blur(14px);
                 box-shadow: 0 20px 45px -20px rgba(0, 0, 0, 0.7);
             }
-
             .panel-header {
                 display: flex; align-items: center; justify-content: space-between;
                 margin-bottom: 15px; gap: 10px; flex-wrap: wrap;
             }
-
             .panel-title { font-size: 0.98rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-
             .guardrail-box {
                 background: rgba(99, 102, 241, 0.07);
                 border: 1px solid rgba(99, 102, 241, 0.24);
@@ -228,71 +188,52 @@ def home():
                 margin-bottom: 14px; font-size: 0.76rem; color: var(--text-secondary);
                 line-height: 1.45;
             }
-
             .guardrail-box strong { color: #a5b4fc; }
-
             .dropzone {
                 border: 2px dashed rgba(99, 102, 241, 0.38); border-radius: 14px;
                 padding: 28px 18px; text-align: center;
                 background: rgba(99, 102, 241, 0.04); cursor: pointer;
-                transition: all 0.2s ease;
             }
-
             .dropzone:hover, .dropzone.dragover {
                 border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.08);
             }
-
             .drop-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
             .drop-hint { font-size: 0.78rem; color: var(--text-secondary); }
-
             .file-preview {
                 display: none; margin-top: 12px; padding: 11px 13px; border-radius: 10px;
                 background: rgba(15, 23, 42, 0.92); border: 1px solid var(--border-glow);
                 align-items: center; justify-content: space-between; gap: 10px;
             }
-
             .file-preview.visible { display: flex; }
             .file-preview-name { font-size: 0.84rem; font-weight: 600; word-break: break-all; }
             .file-preview-size { font-size: 0.73rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
-
             .clear-btn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; }
             .clear-btn:hover { color: var(--danger); }
-
             .progress-wrap { display: none; margin-top: 12px; }
             .progress-wrap.visible { display: block; }
             .progress-bar-bg { width: 100%; height: 6px; border-radius: 999px; background: rgba(148, 163, 184, 0.16); overflow: hidden; }
             .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-cyan)); transition: width 0.2s ease; }
             .progress-label { margin-top: 5px; font-size: 0.73rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; text-align: right; }
-
             .btn-primary {
                 width: 100%; margin-top: 14px; padding: 11px 16px; border: none; border-radius: 10px;
                 font-size: 0.88rem; font-weight: 600; color: #fff;
                 background: linear-gradient(135deg, var(--accent), #4f46e5);
                 box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.65);
-                cursor: pointer; transition: all 0.2s ease;
+                cursor: pointer;
             }
-
-            .btn-primary:hover:not(:disabled) { transform: translateY(-1px); }
             .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
             .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
             .search-input {
                 background: rgba(6, 9, 19, 0.8); border: 1px solid var(--border);
                 border-radius: 9px; padding: 7px 11px; color: var(--text-primary);
                 font-size: 0.82rem; min-width: 185px; outline: none;
             }
-
-            .search-input:focus { border-color: var(--accent); }
-
             .btn-icon {
                 background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border);
                 color: var(--text-secondary); border-radius: 9px; padding: 7px 11px;
                 font-size: 0.8rem; cursor: pointer;
             }
-
             .btn-icon:hover { color: var(--text-primary); border-color: var(--border-glow); }
-
             .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
             table { width: 100%; border-collapse: collapse; text-align: left; }
             th {
@@ -302,93 +243,72 @@ def home():
             }
             td { padding: 12px; font-size: 0.84rem; border-bottom: 1px solid rgba(148, 163, 184, 0.08); vertical-align: middle; }
             tbody tr:hover { background: rgba(30, 41, 59, 0.45); }
-
             .ext-badge {
                 display: inline-block; padding: 2px 6px; border-radius: 5px;
                 font-size: 0.68rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
                 background: rgba(99, 102, 241, 0.2); color: #a5b4fc; margin-right: 6px;
             }
-
             .hash-pill {
                 display: inline-block; padding: 3px 7px; border-radius: 6px;
                 font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
                 background: rgba(16, 185, 129, 0.12); color: #6ee7b7;
                 border: 1px solid rgba(16, 185, 129, 0.25);
             }
-
             .hash-pill.unverified {
                 background: rgba(245, 158, 11, 0.12); color: #fcd34d;
                 border-color: rgba(245, 158, 11, 0.25);
             }
-
             .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-secondary); }
             .action-group { display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
-
             .btn-sm {
                 padding: 5px 9px; border-radius: 7px; font-size: 0.75rem; font-weight: 500;
                 border: 1px solid var(--border); background: rgba(15, 23, 42, 0.95);
-                color: var(--text-primary); cursor: pointer; transition: all 0.15s ease;
+                color: var(--text-primary); cursor: pointer;
             }
-
             .btn-sm:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
             .btn-sm.verify:hover { border-color: var(--success); color: #6ee7b7; }
             .btn-sm.danger:hover { border-color: var(--danger); color: #fca5a5; }
-
             .empty-state { padding: 36px 20px; text-align: center; color: var(--text-secondary); font-size: 0.86rem; }
-
-            /* CloudWatch Terminal Feed */
             .cw-terminal {
                 background: #03060d; border: 1px solid rgba(6, 182, 212, 0.28);
                 border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace;
                 font-size: 0.79rem; max-height: 480px; overflow-y: auto;
             }
-
             .cw-entry {
                 padding: 10px 12px; border-radius: 8px;
                 background: rgba(15, 23, 42, 0.65);
                 border-left: 3px solid var(--accent-cyan);
                 margin-bottom: 10px; line-height: 1.5;
             }
-
             .cw-entry.delete-ev { border-left-color: var(--danger); }
             .cw-meta { color: var(--text-secondary); font-size: 0.72rem; margin-bottom: 4px; }
             .cw-event { color: #38bdf8; font-weight: 600; }
             .cw-entry.delete-ev .cw-event { color: #fca5a5; }
-
-            /* Architecture Grid */
             .flow-diagram {
                 display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
                 gap: 14px; margin-bottom: 20px;
             }
-
             .flow-node {
                 background: rgba(6, 9, 19, 0.78); border: 1px solid var(--border-glow);
                 border-radius: 12px; padding: 15px;
             }
-
             .flow-tag { font-size: 0.69rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); margin-bottom: 5px; }
             .flow-title { font-size: 0.94rem; font-weight: 700; margin-bottom: 5px; }
             .flow-desc { font-size: 0.79rem; color: var(--text-secondary); line-height: 1.45; }
-
-            /* Modal */
             .modal-backdrop {
                 display: none; position: fixed; inset: 0; z-index: 90;
                 background: rgba(2, 6, 23, 0.78); backdrop-filter: blur(8px);
                 place-items: center; padding: 20px;
             }
-
             .modal-backdrop.open { display: grid; }
-
             .modal-card {
                 width: 100%; max-width: 440px; background: #0f172a;
                 border: 1px solid var(--border-glow); border-radius: 16px;
                 padding: 22px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
             }
-
             .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
             .modal-title { font-size: 1rem; font-weight: 700; }
             .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; }
-
             .expiry-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
             .exp-btn {
                 padding: 8px; border-radius: 8px; border: 1px solid var(--border);
@@ -396,14 +316,12 @@ def home():
                 font-size: 0.78rem; font-weight: 600; cursor: pointer;
             }
             .exp-btn.active { border-color: var(--accent-cyan); color: var(--text-primary); background: rgba(6, 182, 212, 0.16); }
-
             .share-url-box {
                 width: 100%; padding: 9px 11px; border-radius: 8px;
                 background: #060913; border: 1px solid var(--border);
                 color: #a5b4fc; font-family: 'JetBrains Mono', monospace;
                 font-size: 0.74rem; margin: 10px 0;
             }
-
             .qr-wrap { text-align: center; margin: 12px 0; }
             .qr-wrap img { border-radius: 10px; border: 4px solid #fff; width: 150px; height: 150px; }
             .countdown-badge {
@@ -411,7 +329,6 @@ def home():
                 background: rgba(245, 158, 11, 0.15); color: #fcd34d;
                 font-family: 'JetBrains Mono', monospace; font-size: 0.76rem;
             }
-
             .toast {
                 position: fixed; bottom: 22px; right: 22px; z-index: 120;
                 padding: 12px 17px; border-radius: 12px;
@@ -437,7 +354,6 @@ def home():
                         <div class="brand-sub">FastAPI • Docker • EC2 • S3 • Lambda • CloudWatch</div>
                     </div>
                 </div>
-
                 <div class="nav-pills">
                     <button type="button" class="vault-btn" id="vaultLockBtn" onclick="toggleVaultLock()">
                         🔒 Vault Locked (Click to Unlock)
@@ -453,12 +369,11 @@ def home():
 
         <main class="container">
             <div class="view-tabs">
-                <button class="tab-btn active" id="tabConsole" onclick="switchTab('console')">Zero-Trust Storage Vault</button>
-                <button class="tab-btn" id="tabLogs" onclick="switchTab('logs')">⚡ Live Lambda & CloudWatch Logs</button>
-                <button class="tab-btn" id="tabArch" onclick="switchTab('arch')">Event-Driven Architecture</button>
+                <button type="button" class="tab-btn active" id="tabConsole" onclick="switchTab('console')">Zero-Trust Storage Vault</button>
+                <button type="button" class="tab-btn" id="tabLogs" onclick="switchTab('logs')">⚡ Live Lambda & CloudWatch Logs</button>
+                <button type="button" class="tab-btn" id="tabArch" onclick="switchTab('arch')">Event-Driven Architecture</button>
             </div>
 
-            <!-- TAB 1: STORAGE VAULT -->
             <section id="viewConsole">
                 <div class="kpi-grid">
                     <div class="kpi-card">
@@ -484,22 +399,18 @@ def home():
                 </div>
 
                 <div class="dashboard-grid">
-                    <!-- Upload Panel -->
                     <div class="panel">
                         <div class="panel-header">
                             <div class="panel-title">Upload With Policy Guardrails</div>
                         </div>
-
                         <div class="guardrail-box">
                             <strong>Active Policy Engine:</strong> Max <strong>25 MB</strong> per object • Blocks executable binaries (<code>.exe</code>, <code>.sh</code>, <code>.bat</code>) • Auto-computes <strong>SHA-256</strong> hash & triggers <strong>AWS Lambda</strong> audit log.
                         </div>
-
                         <div class="dropzone" id="dropzone">
                             <div class="drop-title">Drop file here or click to select</div>
                             <div class="drop-hint">Requires unlocked Vault Passcode (Default: BNMIT2026)</div>
                             <input type="file" id="fileInput" hidden />
                         </div>
-
                         <div class="file-preview" id="filePreview">
                             <div>
                                 <div class="file-preview-name" id="previewName"></div>
@@ -507,18 +418,15 @@ def home():
                             </div>
                             <button type="button" class="clear-btn" onclick="clearFile()">Remove</button>
                         </div>
-
                         <div class="progress-wrap" id="progressWrap">
                             <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
                             <div class="progress-label" id="progressLabel">Hashing & Streaming... 0%</div>
                         </div>
-
                         <button type="button" class="btn-primary" id="uploadBtn" onclick="uploadSelectedFile()" disabled>
                             Hash & Deploy to AWS S3
                         </button>
                     </div>
 
-                    <!-- Bucket Explorer -->
                     <div class="panel">
                         <div class="panel-header">
                             <div class="panel-title">Private S3 Vault Objects</div>
@@ -527,7 +435,6 @@ def home():
                                 <button type="button" class="btn-icon" onclick="loadFiles()">↻ Refresh</button>
                             </div>
                         </div>
-
                         <div class="table-wrap">
                             <table>
                                 <thead>
@@ -547,7 +454,6 @@ def home():
                 </div>
             </section>
 
-            <!-- TAB 2: LIVE LAMBDA + CLOUDWATCH AUDIT STREAM -->
             <section id="viewLogs" style="display:none;">
                 <div class="panel">
                     <div class="panel-header">
@@ -566,7 +472,6 @@ def home():
                 </div>
             </section>
 
-            <!-- TAB 3: ARCHITECTURE -->
             <section id="viewArch" style="display:none;">
                 <div class="panel">
                     <div class="panel-header">
@@ -598,21 +503,20 @@ def home():
             </section>
         </main>
 
-        <!-- Self-Destructing Share Link & QR Modal -->
         <div class="modal-backdrop" id="shareModal">
             <div class="modal-card">
                 <div class="modal-header">
                     <div class="modal-title">Zero-Trust Self-Destructing Share Link</div>
-                    <button class="close-modal" onclick="closeShareModal()">×</button>
+                    <button type="button" class="close-modal" onclick="closeShareModal()">×</button>
                 </div>
                 <div style="font-size: 0.82rem; color: var(--text-secondary);">
                     Target Object: <strong id="shareFileName" style="color: var(--text-primary);"></strong>
                 </div>
                 <div class="expiry-pills">
-                    <button class="exp-btn active" onclick="selectExpiry(60, this)">1 Min</button>
-                    <button class="exp-btn" onclick="selectExpiry(600, this)">10 Mins</button>
-                    <button class="exp-btn" onclick="selectExpiry(3600, this)">1 Hour</button>
-                    <button class="exp-btn" onclick="selectExpiry(86400, this)">24 Hours</button>
+                    <button type="button" class="exp-btn active" onclick="selectExpiry(60, this)">1 Min</button>
+                    <button type="button" class="exp-btn" onclick="selectExpiry(600, this)">10 Mins</button>
+                    <button type="button" class="exp-btn" onclick="selectExpiry(3600, this)">1 Hour</button>
+                    <button type="button" class="exp-btn" onclick="selectExpiry(86400, this)">24 Hours</button>
                 </div>
                 <div style="text-align:center;">
                     <span class="countdown-badge" id="expiryCountdown">Link expires in 01:00</span>
@@ -625,8 +529,8 @@ def home():
                     </div>
                 </div>
                 <div style="display:flex; gap:8px; margin-top:12px;">
-                    <button class="btn-primary" style="margin-top:0;" onclick="copyShareUrl()">Copy Presigned URL</button>
-                    <button class="btn-icon" onclick="openShareUrl()">Open ↗</button>
+                    <button type="button" class="btn-primary" style="margin-top:0;" onclick="copyShareUrl()">Copy Presigned URL</button>
+                    <button type="button" class="btn-icon" onclick="openShareUrl()">Open ↗</button>
                 </div>
             </div>
         </div>
@@ -836,7 +740,6 @@ def home():
                 else if (action === 'share') openShareModal(key);
                 else if (action === 'delete') deleteFile(key);
             });
-            
 
             async function verifyIntegrity(key) {
                 showToast(`Recomputing live SHA-256 from S3 stream for "${key}"...`);
@@ -877,7 +780,6 @@ def home():
                 }
             }
 
-            /* Share Modal with Self-Destruct Timer & QR */
             function openShareModal(key) {
                 currentShareKey = key;
                 document.getElementById('shareFileName').textContent = key;
@@ -943,7 +845,6 @@ def home():
                 if (url) window.open(url, '_blank');
             }
 
-            /* CloudWatch Logs Stream */
             async function loadCloudWatchLogs() {
                 const terminal = document.getElementById('cwTerminal');
                 terminal.innerHTML = `<div class="empty-state">Querying Amazon CloudWatch Logs via boto3...</div>`;
@@ -1006,7 +907,6 @@ async def upload_file(
     sha256_hash = hashlib.sha256(content).hexdigest()
 
     try:
-        import io
         s3_client.upload_fileobj(
             io.BytesIO(content),
             S3_BUCKET,
